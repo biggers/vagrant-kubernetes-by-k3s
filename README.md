@@ -1,7 +1,10 @@
 
-## Running "desktop" Rancher k3s Kubernetes
+# Run "desktop" Kubernetes via Rancher 'k3s '
 
-### References
+## References
+
+ * Rancher 'k3s', streamlined Kubernetes for IoT / Edge:
+   https://github.com/rancher/k3s
 
  * A very well-documented Virtualbox "box" for Ubuntu:
    https://app.vagrantup.com/peru/boxes/ubuntu-18.04-server-amd64
@@ -11,6 +14,9 @@
 
  * Vagrantfile for *kubespray* (Ansible playbooks for K8S installations):
    https://github.com/kubernetes-sigs/kubespray/blob/master/Vagrantfile
+
+
+## Setting up K8S in Vagrant / Virtualbox "nodes"
 
 ### Install Vagrant
 
@@ -71,31 +77,29 @@ vg box add peru/ubuntu-18.04-server-amd64
 
 ## Launch & install a K3s master and node(s)
 
-Using the `Vagrantfile` in this project, run `vagrant up`:
+Using the `Vagrantfile` in this project, just run `vagrant up`.  It will install Rancher 'k3s' and provision as needed, for Master and worker Nodes.
 
-```sh
-alias vg=vagrant
-
-vg up
-```
 
 ## Install the K8S Dashboard "app"
+
+Official Kubernetes README for the Dashboard: https://github.com/kubernetes/dashboard/blob/master/README.md
 
 ### Configure `kubectl`, and test
 
 First, set-up configuration for `kubectl` to work with the K8S/k3s *Master*
-node.
+node.  The `k3s.yaml` config-file is created during Master-node provisioning.  See this project's `Vagrantfile`.
 
 ```sh
-export KUBECONFIG=$PWD/k3s.yaml  # from the Master-node Vg provisioning!
+export KUBECONFIG=$PWD/k3s.yaml
 
 kubectl get pods -A  # list Pods in 'kube-system' namespace
 ```
 
-### Create the K8S admin-user
+### Create the K8S Dashboard admin-user
 
-Create the `admin-user` via a `dashboard-admin.yaml` file.
-Get a ``dashboard-admin.yaml`` file from... where?  **NEED REF**!
+Create the Dashboard admin-user, via a `dashboard-admin.yaml` file.
+Use a ``dashboard-admin.yaml`` file with `kubectl` to create this user.
+Reference: https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md#creating-sample-user
 
 ```sh
 kubectl apply -f dashboard-admin.yaml
@@ -120,7 +124,9 @@ kubectl proxy &
 xdg-open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 ```
 
-## `kubectl` information commands
+## Trials of Kubernetes / Rancher 'k3s'
+
+### `kubectl` information commands
 
 ```sh
 kubectl cluster-info
@@ -140,9 +146,7 @@ kubectl get services -A -o wide
 kubectl api-resources
 ```
 
-## Advanced K8S / k3s Trials
-
-### hello-minikube deploy & test
+### hello-minikube app, deploy & test
 
 ```sh
 
